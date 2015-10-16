@@ -1,0 +1,36 @@
+{
+  "name": "fable-settings-zookeeper",
+  "version": "0.0.1",
+  "description": "Provides zookeeper support to fable-settings. May eventually become a Retold (dependency-injected) module",
+  "main": "source/Fable-Settings-Zookeeper.js",
+  "scripts": {
+    "start": "node source/Fable-Settings-Zookeeper.js",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -u tdd -R spec",
+    "test": "./node_modules/mocha/bin/_mocha -u tdd -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jasonhillier/fable-settings-zookeeper.git"
+  },
+  "keywords": [
+    "logging"
+  ],
+  "author": "Jason Hillier <jason@hillier.us>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasonhillier/fable-settings-zookeeper/issues"
+  },
+  "homepage": "https://github.com/jasonhillier/fable-settings-zookeeper",
+  "devDependencies": {
+    "chai": "2.0.0",
+    "codeclimate-test-reporter": "0.0.4",
+    "coveralls": "2.11.2",
+    "istanbul": "0.3.5",
+    "mocha": "2.1.0"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "deasync": "^0.1.3",
+    "node-zookeeper-client": "^0.2.2"
+  }
+}
