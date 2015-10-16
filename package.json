@@ -1,8 +1,8 @@
 {
   "name": "fable-settings-zookeeper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provides zookeeper support to fable-settings. May eventually become a Retold (dependency-injected) module",
-  "main": "source/Fable-Settings-Zookeeper.js",
+  "main": "source/fable-settings-zookeeper.js",
   "scripts": {
     "start": "node source/Fable-Settings-Zookeeper.js",
     "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -u tdd -R spec",
