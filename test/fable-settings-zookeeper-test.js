@@ -14,7 +14,8 @@ var fs = require('fs');
 var _MockSettings = (
 {
 	Product: 'FableSettingsZookeeper',
-	ProductVersion: '0.0.0'
+	ProductVersion: '0.0.0',
+	ZookeeperUrl: 'zk://127.0.0.1:2181/testdemo'
 });
 
 suite
@@ -42,7 +43,7 @@ suite
 			function()
 			{
 				//synchronous -- will throw exception on failure
-				var result = _FableSettingsZookeeper.loadSettingsFromUrlSync('zk://10.20.30.10:2181,10.20.30.11:2181/testdemo');
+				var result = _FableSettingsZookeeper.loadSettingsFromUrlSync(_MockSettings.ZookeeperUrl);
 
 				Assert.ok(result, 'should not be null');
 
