@@ -39,6 +39,20 @@ suite
 
 		test
 		(
+			'should be able to connect and store a value',
+			function(fDone)
+			{
+				_FableSettingsZookeeper.storeSettingsToUrl(_MockSettings.ZookeeperUrl, _MockSettings, function(err, stat)
+				{
+					Assert.notOk(err, 'should not have error');
+
+					return fDone();
+				});
+			}
+		);
+
+		test
+		(
 			'should be able to connect and get a setting value',
 			function()
 			{

@@ -16,8 +16,8 @@ var FableSettingsZookeeper = function()
 {
 	var tmpFableSettingsZookeeper = (
 	{
-		// Connect to zookeeper, load data for key on server
-		loadSettingsFromServer: function(pServer, pKey, fCallback)
+		// Connect to a zookeeper server, handle connection timeout
+		_connectToServer: function(pServer, fCallback)
 		{
 			var client = libZookeeper.createClient(pServer);
 
@@ -34,6 +34,49 @@ var FableSettingsZookeeper = function()
 			client.once('connected', function()
 			{
 				tmpConnected = true;
+				return fCallback(null, client);
+			});
+
+			client.connect();
+		},
+		storeSettingsToServer: function(pServer, pKey, pSettings, fCallback)
+		{
+			tmpFableSettingsZookeeper._connectToServer(pServer, function(err, client)
+			{
+				if (err)
+					return fCallback(err);
+
+				client.exists(pKey, function(err, stat)
+				{
+					if (err)
+						return fCallback(err);
+
+					var tmpSettingsData = JSON.stringify(pSettings);
+
+					if (stat)
+					{
+						client.setData(pKey, new Buffer(tmpSettingsData), fCallback);
+					}
+					else
+					{
+						client.mkdirp(pKey, function(err, path)
+						{
+							if (err)
+								return fCallback(err);
+
+							client.setData(pKey, new Buffer(tmpSettingsData), fCallback);
+						});
+					}
+				});
+			});
+		},
+		// Connect to zookeeper, load data for key on server
+		loadSettingsFromServer: function(pServer, pKey, fCallback)
+		{
+			tmpFableSettingsZookeeper._connectToServer(pServer, function(err, client)
+			{
+				if (err)
+					return fCallback(err);
 				//console.log('connected to zookeeper');
 
 				client.getData('/' + pKey, function(err, data, stat)
@@ -55,12 +98,10 @@ var FableSettingsZookeeper = function()
 					return fCallback(tmpErr, tmpData);
 				});
 			});
-
-			client.connect();
 		},
-		// Connect to zookeeper ensemble (failover to each server in list), load data for key in url
+		// Connect to zookeeper ensemble (failover to each server in list), perform action for key in url
 		//  e.g. zk://10.20.30.10:2181,10.20.30.11:2181/testdemo
-		loadSettingsFromUrl: function(pUrl, fCallback)
+		_executeMethodForUrl: function(pUrl, fMethod, fCallback)
 		{
 			var matches = pUrl.match(/zk:\/\/([^\/]+)\/([^:]+)/);
 			var servers = matches[1];
@@ -72,7 +113,7 @@ var FableSettingsZookeeper = function()
 			var tmpLastError = null;
 			libAsync.eachSeries(serverList, function(pServer, fNext)
 			{
-				tmpFableSettingsZookeeper.loadSettingsFromServer(pServer, key, function(err, data)
+				fMethod(pServer, key, function(err, data)
 				{
 					if (err)
 					{
@@ -93,6 +134,20 @@ var FableSettingsZookeeper = function()
 					return fCallback(tmpLastError);
 				}
 			});
+		},
+		loadSettingsFromUrl: function(pUrl, fCallback)
+		{
+			return tmpFableSettingsZookeeper._executeMethodForUrl(pUrl, tmpFableSettingsZookeeper.loadSettingsFromServer, fCallback);
+		},
+		storeSettingsToUrl: function(pUrl, pSettings, fCallback)
+		{
+			return tmpFableSettingsZookeeper._executeMethodForUrl(
+				pUrl,
+				function(pServer, pKey, fNext)
+				{
+					return tmpFableSettingsZookeeper.storeSettingsToServer(pServer, pKey, pSettings, fNext);
+				},
+				fCallback);
 		},
 		// Connect and load data from zookeeper synchronously
 		loadSettingsFromUrlSync: function(pUrl)

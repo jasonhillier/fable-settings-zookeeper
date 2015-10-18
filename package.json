@@ -1,6 +1,6 @@
 {
   "name": "fable-settings-zookeeper",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Provides zookeeper support to fable-settings. May eventually become a Retold (dependency-injected) module",
   "main": "source/fable-settings-zookeeper.js",
   "scripts": {
