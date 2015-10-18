@@ -79,7 +79,7 @@ var FableSettingsZookeeper = function()
 					return fCallback(err);
 				//console.log('connected to zookeeper');
 
-				client.getData('/' + pKey, function(err, data, stat)
+				client.getData(pKey, function(err, data, stat)
 				{
 					if (err)
 						return fCallback(err);
@@ -105,7 +105,7 @@ var FableSettingsZookeeper = function()
 		{
 			var matches = pUrl.match(/zk:\/\/([^\/]+)\/([^:]+)/);
 			var servers = matches[1];
-			var key = matches[2];
+			var key = '/' + matches[2];
 
 			var serverList = servers.split(',');
 
